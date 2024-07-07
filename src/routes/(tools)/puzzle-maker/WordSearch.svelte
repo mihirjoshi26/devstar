@@ -89,8 +89,13 @@
     }
 
     function play() {
+    if (words.length > 0) {
         navigate('/play');
+    } else {
+        alert('Please add at least one word before playing.');
+        // Optionally, you can handle the case where no words are entered.
     }
+}
 
     function toggleHighlightWords() {
         isHighlighting = !isHighlighting;
@@ -203,17 +208,17 @@
             </div>
             
             <div class="w-1 pl-80 mt-1">
-                <div class="play-container" style="margin-top: -24px; margin-left: 300px;">
+                <div class="play-container" style="margin-top: -24px; margin-left: 320px;">
                     <button on:click={play} class="bg-green-500 text-white px-8 py-2">
                         <i class="fa-solid fa-circle-play fa-lg"></i>
                     </button>
                 </div>
-                <div class="refresh-container" style="margin-top: -40px; margin-left: 100px;">
+                <div class="refresh-container" style="margin-top: -40px; margin-left: 120px;">
                     <button on:click={refresh} class="bg-green-500 text-white px-8 py-2">
                         <i class="fa-regular fa-arrows-rotate fa-lg"></i>
                     </button>
                 </div>
-                <div class="toggle-button-container" style="margin-top: -40px; margin-left: 200px;">
+                <div class="toggle-button-container" style="margin-top: -40px; margin-left: 220px;">
                     <button on:click={toggleHighlightWords} class="bg-green-500 text-white px-8 py-2">
                         {#if isHighlighting}
                             <i class="fa-regular fa-eye-slash fa-lg"></i>

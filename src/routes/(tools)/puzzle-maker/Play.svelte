@@ -3,6 +3,7 @@
     import { gridStore, wordsStore } from './gridStore';
     import { get } from 'svelte/store';
     import { writable } from 'svelte/store';
+    import { DarkMode } from 'flowbite-svelte';
 
     let canvas;
     let ctx;
@@ -204,6 +205,23 @@
         }
         return [];
     }
+
+    function printPuzzle() {
+        window.print();
+    }
+
+    function shareLink() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Word Search Puzzle',
+                text: 'Check out this word search puzzle!',
+                url: window.location.href
+            })
+            .catch(error => console.log('Error sharing:', error));
+        } else {
+            alert('Web Share API is not supported in your browser.');
+        }
+    }
 </script>
 
 <style>
@@ -223,7 +241,7 @@
     }
 
     .words-list {
-        margin-bottom: 250px;
+        margin-bottom: 220px;
     }
 
     .line-through {
@@ -235,8 +253,28 @@
         padding: 40px;
         padding-top: 10px; /* Add some padding at the top to separate the canvas from the heading */
     }
-    .hint button:hover i {
-        transform: scale(1.5); /* Increase size by 20% */
+
+    .button-container {
+        display: inline-block;
+        margin-left: 16px;
+    }
+
+    .button-container button {
+        background-color: #404A5B;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .button-container button:hover {
+        background-color: #505A6B;
+    }
+
+    .button-container button:hover i {
+        transform: scale(1.2); /* Increase size by 20% */
         transition: transform 0.2s; /* Smooth transition */
     }
 </style>
@@ -256,10 +294,16 @@
                 <li class="{get(foundWords)[index] ? 'line-through' : ''}">{w}</li>
             {/each}
         </ul>
-    </div>
-    <div class="hint" style="margin-top: -40px; margin-left: 200px;">
-        <button on:click={hint}>
-              <i class="fa-solid fa-lightbulb-on fa-xl" style="color: yellow; margin-right: 4px; vertical-align: middle;"></i>
-        </button>
+        <div class="button-container">
+            <button on:click={hint}>
+                <i class="fa-solid fa-lightbulb-on fa-xl" style="color: yellow; vertical-align: middle;"></i>
+            </button>
+            <button on:click={printPuzzle}>
+                <i class="fa-solid fa-print fa-xl" style="color: yellow; vertical-align: middle;"></i>
+            </button>
+            <button on:click={shareLink}>
+                <i class="fa-solid fa-share-nodes fa-xl" style="color: yellow; vertical-align: middle;"></i>
+            </button>
+        </div>
     </div>
 </div>

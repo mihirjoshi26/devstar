@@ -1,17 +1,14 @@
 <script>
     import WordSearch from './WordSearch.svelte';
+    import Play from './Play.svelte';
+    import { Router, Route } from 'svelte-routing';
 </script>
 
-
-
-<div class="card gap-16 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 overflow-hidden rounded-lg">
-	<!-- Add tool here -->
-	<main>
-		<WordSearch gridSize={10} />
-	</main>
-	
-</div>
+<Router>
+    <Route path="/" component={WordSearch} />
+    <Route path="/play" component={Play} />
+</Router>
 
 <style>
-
+    /* Add your styles here if needed */
 </style>

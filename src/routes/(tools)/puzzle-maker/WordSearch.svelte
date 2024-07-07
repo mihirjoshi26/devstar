@@ -1,5 +1,7 @@
 <script>
     import { onMount } from 'svelte';
+    import { navigate } from 'svelte-routing';
+    import { gridStore, wordsStore } from './gridStore';
 
     onMount(() => {
         const link = document.createElement('link');
@@ -31,6 +33,11 @@
         grid = Array.from({ length: gridSize }, () => Array(gridSize).fill({ letter: '', highlight: false }));
         words.forEach(placeWord);
         fillEmptySpaces();
+        if (isHighlighting) {
+            highlightWords();
+        }
+        gridStore.set(grid);
+        wordsStore.set(words);
     }
 
     function placeWord(word) {
@@ -79,6 +86,10 @@
 
     function refresh() {
         generateGrid();
+    }
+
+    function play() {
+        navigate('/play');
     }
 
     function toggleHighlightWords() {
@@ -160,52 +171,65 @@
 
     .refresh-container button:hover i,
     .toggle-button-container button:hover i,
+    .play-container button:hover i,
     .bg-red-500:hover i {
         transform: scale(1.2); /* Increase size by 20% */
         transition: transform 0.2s; /* Smooth transition */
     }
+
     .bg-green-500:hover {
         background-color: #04875e; /* Tailwind green-600 */
     }
+
     .bg-blue-500:hover{
         background-color:#2563eb ;
     }
 </style>
 
-<div class="container">
-    <div class="pl-2" style="margin-bottom: 20px;">
-        <input type="text" bind:value={word} placeholder="Enter a word" class="border p-2 w-full mb-2" />
-        <button on:click={addWord} class="bg-blue-500 text-white px-4 py-2">Add Word</button>
-        <ul class="mt-4">
-            {#each words as w, index}
-                <li class="bg-gray-100 flex justify-between items-center mt-2">
-                    <span>{w}</span> 
-                    <button on:click={() => removeWord(index)} class="bg-red-500 text-white px-2 py-1"><i class="fa-regular fa-trash fa-lg"></i></button>
-                </li>
-            {/each}
-        </ul>
-    </div>
-    <div class="w-1 pl-80 mt-1">
-        <div class="refresh-container" style="margin-top: -24px; margin-left: 100px;">
-            <button on:click={refresh} class="bg-green-500 text-white px-4 py-2">
-                <i class="fa-regular fa-arrows-rotate"></i>
-            </button>
+<div class="card gap-16 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 overflow-hidden rounded-lg">
+    <main>
+        <div class="container">
+            <div class="pl-2" style="margin-bottom: 20px;">
+                <input type="text" bind:value={word} placeholder="Enter a word" class="bg-gray-200 border p-2 w-full mb-2" />
+                <button on:click={addWord} class="bg-blue-500 text-white px-4 py-2 text-left pl-2">Add Word</button>
+                <ul class="mt-4">
+                    {#each words as w, index}
+                        <li class="bg-gray-200 flex justify-between items-center mt-2">
+                            <span class="ml-2">{w}</span>
+                            <button on:click={() => removeWord(index)} class="bg-red-500 text-white px-2 py-1"><i class="fa-regular fa-trash fa-lg"></i></button>
+                        </li>
+                    {/each}
+                </ul>
+            </div>
+            
+            <div class="w-1 pl-80 mt-1">
+                <div class="play-container" style="margin-top: -24px; margin-left: 300px;">
+                    <button on:click={play} class="bg-green-500 text-white px-8 py-2">
+                        <i class="fa-solid fa-circle-play fa-lg"></i>
+                    </button>
+                </div>
+                <div class="refresh-container" style="margin-top: -40px; margin-left: 100px;">
+                    <button on:click={refresh} class="bg-green-500 text-white px-8 py-2">
+                        <i class="fa-regular fa-arrows-rotate fa-lg"></i>
+                    </button>
+                </div>
+                <div class="toggle-button-container" style="margin-top: -40px; margin-left: 200px;">
+                    <button on:click={toggleHighlightWords} class="bg-green-500 text-white px-8 py-2">
+                        {#if isHighlighting}
+                            <i class="fa-regular fa-eye-slash fa-lg"></i>
+                        {:else}
+                            <i class="fa-regular fa-eye fa-lg"></i>
+                        {/if}
+                    </button>
+                </div>
+                <div class="grid" style="--grid-size: {gridSize};">
+                    {#each grid as row}
+                        {#each row as cell}
+                            <div class="cell w-8 h-8 {cell.highlight ? 'highlight' : ''}">{cell.letter}</div>
+                        {/each}
+                    {/each}
+                </div>
+            </div>
         </div>
-        <div class="toggle-button-container" style="margin-top: -40px; margin-left: 200px;">
-            <button on:click={toggleHighlightWords} class="bg-green-500 text-white px-4 py-2">
-                {#if isHighlighting}
-                    <i class="fa-regular fa-eye-slash"></i>
-                {:else}
-                    <i class="fa-regular fa-eye"></i>
-                {/if}
-            </button>
-        </div>
-        <div class="grid" style="--grid-size: {gridSize};">
-            {#each grid as row}
-                {#each row as cell}
-                    <div class="cell w-8 h-8 {cell.highlight ? 'highlight' : ''}">{cell.letter}</div>
-                {/each}
-            {/each}
-        </div>
-    </div>
+    </main>
 </div>

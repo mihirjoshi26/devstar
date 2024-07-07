@@ -3,19 +3,19 @@
     import { gridStore, wordsStore } from './gridStore';
     import { get } from 'svelte/store';
     import { writable } from 'svelte/store';
-    import { DarkMode } from 'flowbite-svelte';
 
     let canvas;
     let ctx;
     let grid = [];
     let words = [];
     let cellSize = 40;
-    let padding = 5;
     let selectedCells = [];
     let foundWordsCells = [];
     let isDragging = false;
     let foundWords = writable([]);
-    let hintIconColor = 'yellow'; // Reactive variable for icon color
+    let nextHintWordIndex = 0;
+    const MAX_HINTS = 3; // Maximum number of hints allowed
+    let hintUsageCount = 0; // Initialize hint usage count
 
     onMount(() => {
         const link = document.createElement('link');
@@ -46,7 +46,7 @@
                 const y = rowIndex * cellSize;
                 
                 // Draw cell background
-                ctx.fillStyle = cell.highlight ? 'yellow' : 'white';
+                ctx.fillStyle = cell.highlight ? (cell.hint ? '#FFCCCC' : 'yellow') : 'white';
                 ctx.fillRect(x, y, cellSize, cellSize);
                 
                 // Draw cell border
@@ -109,7 +109,7 @@
         grid = grid.map((row, rowIndex) => row.map((cell, colIndex) => {
             const isSelected = selectedCells.some(sc => sc.row === rowIndex && sc.col === colIndex);
             const isFound = foundWordsCells.some(fc => fc.row === rowIndex && fc.col === colIndex);
-            return { ...cell, highlight: isSelected || isFound };
+            return { ...cell, highlight: isSelected || isFound, hint: false };
         }));
         drawGrid();
     }
@@ -139,19 +139,27 @@
     }
 
     function hint() {
-        let hintWordIndex = -1;
-        get(foundWords).some((isFound, index) => {
-            if (!isFound) {
-                hintWordIndex = index;
-                return true;
+        if (hintUsageCount < MAX_HINTS) {
+            let hintWordIndex = getNextHintWordIndex();
+            if (hintWordIndex !== -1) {
+                const hintWord = words[hintWordIndex].replace(' ✓', '');
+                highlightHintWord(hintWord);
+                nextHintWordIndex = hintWordIndex + 1; // Update next hint word index
+                hintUsageCount++; // Increment hint usage count
             }
-            return false;
-        });
-
-        if (hintWordIndex !== -1) {
-            const hintWord = words[hintWordIndex].replace(' ✓', '');
-            highlightHintWord(hintWord);
+        } else {
+            alert("You've used up all hints!");
+            // Optionally disable the hint button or provide feedback
         }
+    }
+
+    function getNextHintWordIndex() {
+        for (let i = nextHintWordIndex; i < words.length; i++) {
+            if (!get(foundWords)[i]) {
+                return i;
+            }
+        }
+        return -1; // Return -1 if all words are found
     }
 
     function highlightHintWord(word) {
@@ -171,7 +179,12 @@
 
         // Temporarily highlight the starting cell for the hint word
         selectedCells = wordCells;
-        highlightCells();
+        grid = grid.map((row, rowIndex) => row.map((cell, colIndex) => {
+            const isSelected = selectedCells.some(sc => sc.row === rowIndex && sc.col === colIndex);
+            const isFound = foundWordsCells.some(fc => fc.row === rowIndex && fc.col === colIndex);
+            return { ...cell, highlight: isSelected || isFound, hint: isSelected };
+        }));
+        drawGrid();
 
         // Reset the highlight after a short delay
         setTimeout(() => {
@@ -224,61 +237,6 @@
     }
 </script>
 
-<style>
-    canvas {
-        border: 1px solid #ccc;
-        margin-top: 28px;
-        margin-left: 20px;
-    }
-
-    .word-heading {
-        background-color: #404A5B;
-        color: white;
-        padding: 8px 16px;
-        margin-bottom: 8px;
-        display: inline-block;
-        border-radius: 8px;
-    }
-
-    .words-list {
-        margin-bottom: 220px;
-    }
-
-    .line-through {
-        text-decoration: line-through;
-    }
-
-    .card {
-        max-width: 1200px;
-        padding: 40px;
-        padding-top: 10px; /* Add some padding at the top to separate the canvas from the heading */
-    }
-
-    .button-container {
-        display: inline-block;
-        margin-left: 16px;
-    }
-
-    .button-container button {
-        background-color: #404A5B;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 8px;
-        font-size: 16px;
-    }
-
-    .button-container button:hover {
-        background-color: #505A6B;
-    }
-
-    .button-container button:hover i {
-        transform: scale(1.2); /* Increase size by 20% */
-        transition: transform 0.2s; /* Smooth transition */
-    }
-</style>
-
 <div class="card gap-16 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 overflow-hidden rounded-lg">
     <canvas 
         bind:this={canvas}
@@ -287,7 +245,7 @@
         on:mouseup={endDrag}
         on:mouseleave={endDrag}
     ></canvas>
-    <div>
+    <div class="words-container">
         <h2 class="word-heading text-2xl font-semibold">Words to Find:</h2>
         <ul class="words-list list-disc ml-8 text-white">
             {#each words as w, index}
@@ -297,6 +255,7 @@
         <div class="button-container">
             <button on:click={hint}>
                 <i class="fa-solid fa-lightbulb-on fa-xl" style="color: yellow; vertical-align: middle;"></i>
+                <span class="hint-count">{MAX_HINTS - hintUsageCount}</span> <!-- Display remaining hint count -->
             </button>
             <button on:click={printPuzzle}>
                 <i class="fa-solid fa-print fa-xl" style="color: yellow; vertical-align: middle;"></i>
@@ -307,3 +266,81 @@
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        max-width: 1200px;
+        padding: 40px;
+        padding-top: 10px;
+        margin: auto;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .words-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 30px; /* Adjust the margin-top as needed to move the content up */
+    }
+
+    .word-heading {
+        background-color: #404A5B;
+        color: white;
+        padding: 8px 16px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+    }
+
+    .words-list {
+        margin-bottom: 16px; /* Adjust as needed */
+        padding-left: 0; /* Remove default padding */
+    }
+
+    .line-through {
+        text-decoration: line-through;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 90px;
+    }
+
+    .button-container button {
+        background-color: #404A5B;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 8px;
+        font-size: 16px;
+        margin-right: 8px; /* Adjust spacing between buttons */
+        position: relative; /* Position relative for .hint-count */
+    }
+
+    .button-container button:hover {
+        background-color: #505A6B;
+    }
+
+    .button-container button:hover i {
+        transform: scale(1.2);
+        transition: transform 0.2s;
+    }
+
+    .hint-count {
+        position: absolute;
+        top: -10px;
+        right: -5px;
+        background-color: yellow;
+        color: black;
+        padding: 4px;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: bold;
+    }
+</style>

@@ -89,13 +89,13 @@
     }
 
     function play() {
-    if (words.length > 0) {
-        navigate('/play');
-    } else {
-        alert('Please add at least one word before playing.');
-        // Optionally, you can handle the case where no words are entered.
+        if (words.length > 0) {
+            navigate('/play');
+        } else {
+            alert('Please add at least one word before playing.');
+            // Optionally, you can handle the case where no words are entered.
+        }
     }
-}
 
     function toggleHighlightWords() {
         isHighlighting = !isHighlighting;
@@ -115,13 +115,16 @@
                 { x: 1, y: -1 } // Diagonal up-right
             ];
 
-            for (let y = 0; y < gridSize; y++) {
-                for (let x = 0; x < gridSize; x++) {
+            let highlighted = false;
+
+            for (let y = 0; y < gridSize && !highlighted; y++) {
+                for (let x = 0; x < gridSize && !highlighted; x++) {
                     directions.forEach(direction => {
-                        if (canPlaceWord(word, x, y, direction)) {
+                        if (!highlighted && canPlaceWord(word, x, y, direction)) {
                             for (let i = 0; i < word.length; i++) {
                                 grid[y + i * direction.y][x + i * direction.x].highlight = true;
                             }
+                            highlighted = true;
                         }
                     });
                 }

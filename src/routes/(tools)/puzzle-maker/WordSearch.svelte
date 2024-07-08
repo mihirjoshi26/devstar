@@ -191,6 +191,10 @@
     .bg-blue-500:hover{
         background-color:#2563eb ;
     }
+    .card {
+        padding: 15px;
+        
+    }
 </style>
 
 <div class="card gap-16 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 overflow-hidden rounded-lg">

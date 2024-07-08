@@ -93,7 +93,6 @@
             navigate('/play');
         } else {
             alert('Please add at least one word before playing.');
-            // Optionally, you can handle the case where no words are entered.
         }
     }
 
@@ -151,7 +150,7 @@
     .container {
         display: flex;
         justify-content: space-between;
-        height: 50vh; /* Adjust height as needed */
+        height: 50vh; 
         padding: 20px;
     }
 
@@ -186,7 +185,7 @@
     }
 
     .bg-green-500:hover {
-        background-color: #04875e; /* Tailwind green-600 */
+        background-color: #04875e; 
     }
 
     .bg-blue-500:hover{

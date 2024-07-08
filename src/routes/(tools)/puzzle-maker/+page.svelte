@@ -6,6 +6,7 @@
 
 <Router>
     <Route path="/" component={WordSearch} />
+    <Route path="/puzzle-maker" component={WordSearch} />
     <Route path="/play" component={Play} />
 </Router>
 

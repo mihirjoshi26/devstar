@@ -46,7 +46,7 @@
                 const y = rowIndex * cellSize;
                 
                 // Draw cell background
-                ctx.fillStyle = cell.highlight ? (cell.hint ? '#FFCCCC' : 'yellow') : 'white';
+                ctx.fillStyle = cell.highlight ? (cell.hint ? '#E5B7B7' : 'yellow') : 'white';
                 ctx.fillRect(x, y, cellSize, cellSize);
                 
                 // Draw cell border

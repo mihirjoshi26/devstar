@@ -191,9 +191,14 @@
     .bg-blue-500:hover{
         background-color:#2563eb ;
     }
+
     .card {
         padding: 15px;
-        
+    }
+
+    .scrollable {
+        max-height: 280px; /* Set the maximum height */
+        overflow-y: auto; /* Enable vertical scrolling */
     }
 </style>
 
@@ -203,14 +208,16 @@
             <div class="pl-2" style="margin-bottom: 20px;">
                 <input type="text" bind:value={word} placeholder="Enter a word" class="bg-gray-200 border p-2 w-full mb-2" />
                 <button on:click={addWord} class="bg-blue-500 text-white px-4 py-2 text-left pl-2">Add Word</button>
-                <ul class="mt-4">
-                    {#each words as w, index}
-                        <li class="bg-gray-200 flex justify-between items-center mt-2">
-                            <span class="ml-2">{w}</span>
-                            <button on:click={() => removeWord(index)} class="bg-red-500 text-white px-2 py-1"><i class="fa-regular fa-trash fa-lg"></i></button>
-                        </li>
-                    {/each}
-                </ul>
+                <div class="scrollable">
+                    <ul class="mt-4">
+                        {#each words as w, index}
+                            <li class="bg-gray-200 flex justify-between items-center mt-2">
+                                <span class="ml-2">{w}</span>
+                                <button on:click={() => removeWord(index)} class="bg-red-500 text-white px-2 py-1"><i class="fa-regular fa-trash fa-lg"></i></button>
+                            </li>
+                        {/each}
+                    </ul>
+                </div>
             </div>
             
             <div class="w-1 pl-80 mt-1">

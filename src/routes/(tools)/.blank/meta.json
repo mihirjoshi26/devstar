@@ -1,10 +1,16 @@
 {
+<<<<<<< Updated upstream:src/routes/(tools)/.blank/meta.json
     "name": "",
     "description":"",
+=======
+    "name": "Puzzle Maker",
+    "description":"Introducing the Ultimate Puzzle Maker! Dive into the world of wordplay with our versatile tool, designed to craft engaging crosswords, thrilling word searches, and exciting Wheel of Fortune puzzles. Whether you're a seasoned puzzle enthusiast or a casual solver, our Puzzle Maker offers a seamless and enjoyable experience, perfect for honing your vocabulary and problem-solving skills. Unleash your creativity and challenge yourself or others with our customizable and fun puzzle options!",
+>>>>>>> Stashed changes:src/routes/(tools)/puzzle-maker/meta.json
     "contributors": [{
         "name": "",
         "githubId": ""
     }, {
+<<<<<<< Updated upstream:src/routes/(tools)/.blank/meta.json
         "name": "",
         "githubId": ""
     },
@@ -19,5 +25,18 @@
     {
         "name": "",
         "githubId": ""
+=======
+        "name": "Dharmik Satani",
+        "githubId": "/DBSatani88"
+    }, {
+        "name": "Sonal Sonarghare",
+        "githubId": "/SonalSonarghare"
+    }, {
+        "name": "Sourabh Singh",
+        "githubId": "/SourabhSinghBhadouriya"
+    },{
+        "name": "Tanvi More",
+        "githubId": "/Tanvi119"
+>>>>>>> Stashed changes:src/routes/(tools)/puzzle-maker/meta.json
     }]
 }

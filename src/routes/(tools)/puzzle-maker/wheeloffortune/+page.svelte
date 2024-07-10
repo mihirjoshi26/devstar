@@ -8,7 +8,7 @@
 	let selectedSegment = "";
 	let newSegment = "";
 	let segments = writable([]);
-	
+  
 	const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}`;
   
 	const createWheel = (segments) => {
@@ -102,7 +102,7 @@
 	  border: 1px solid #ccc;
 	  border-radius: 10px;
 	  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	  background-color: #f9f9f9;
+	  background-color: transparent;
 	}
   
 	.wheel-container {
@@ -117,6 +117,7 @@
 	canvas {
 	  border: 1px solid #333;
 	  border-radius: 50%;
+	  background-color: white;
 	}
   
 	.spin-button {
@@ -163,10 +164,15 @@
 	  background-color: #218838;
 	}
   
-	p {
+	.output-box {
 	  margin-top: 20px;
+	  padding: 20px;
+	  border: 1px solid #333;
+	  border-radius: 5px;
+	  background-color: #f8f9fa;
+	  color: black;
 	  font-size: 18px;
-	  color: #333;
+	  font-weight: bold;
 	}
   </style>
   
@@ -178,7 +184,8 @@
 	  <button class="spin-button" on:click={spin}>Spin</button>
 	</div>
 	{#if selectedSegment}
-	  <p>You got: {selectedSegment}</p>
+	  <div class="output-box">
+		<p>You got: {selectedSegment}</p>
+	  </div>
 	{/if}
   </div>
-  
